@@ -1,4 +1,5 @@
 import time
+import ultralytics 
 from picamera2 import Picamera2
 import subprocess
 import cv2
