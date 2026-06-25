@@ -1,10 +1,11 @@
 import time
-import ultralytics 
+import sys 
 from picamera2 import Picamera2
 import subprocess
 import cv2
 from picamera2.encoders import H264Encoder
-from ultralytics import YOLO
+
+subprocess.check_call([sys.executable, "-m", "pip", "install", "ultralytics"])
 
 print("Loading YOLOv8 Nano model...")
 # This automatically downloads the lightweight nano weights file on the first run
