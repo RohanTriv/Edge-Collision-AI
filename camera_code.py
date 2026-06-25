@@ -1,5 +1,6 @@
 import time
 from picamera2 import Picamera2
+import subprocess
 from picamera2.encoders import H264Encoder
 
 print("Initializing Arducam V2...")
@@ -34,7 +35,7 @@ finally:
     picam2.close()
     print("Done! Video saved successfully.")
     # --- AUTOMATIC MP4 CONVERSION VIA FFMPEG ---
-    print(f"Converting raw video stream to cam_mp4...")
+    print(f"Converting raw video stream to mp4...")
     try:
         # Bypasses GPAC entirely and uses the native Pi video transcoder
         subprocess.run([
