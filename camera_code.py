@@ -1,7 +1,13 @@
 import time
 from picamera2 import Picamera2
 import subprocess
+import cv2
 from picamera2.encoders import H264Encoder
+from ultralytics import YOLO
+
+print("Loading YOLOv8 Nano model...")
+# This automatically downloads the lightweight nano weights file on the first run
+model = YOLO("yolov8n.pt") 
 
 print("Initializing Arducam V2...")
 picam2 = Picamera2()
@@ -24,19 +30,22 @@ picam2.start_recording(encoder, output_filename)
 try:
     # Record for 10 seconds (Change this number to record longer)
     duration = 10 
-    for i in range(duration):
-        print(f"Recording... {duration - i} seconds remaining.")
-        time.sleep(1)
+    start_time = time.time()
+    while time.time() - start_time < duration:
+        frame = picam2.capture_array()
+        cv2_frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+        results = model.track(source = cv2_frame, persist=True, verbose=False)
+        annotated_frame = results[0].plot()
+        time.sleep(0.03)
 
 except KeyboardInterrupt:
-    print("\nRecording interrupted by user.")
+    print("\nProcessing interrupted by user.")
 
 finally:
     # Stop recording and safely close the camera interface so it doesn't freeze
-    print("Stopping recording and saving file...")
+    print("Stopping recording and closing cam hardware...")
     picam2.stop_recording()
     picam2.close()
-    print("Done! Video saved successfully.")
     # --- AUTOMATIC MP4 CONVERSION VIA FFMPEG ---
     print(f"Converting raw video stream to mp4...")
     try:
@@ -47,6 +56,6 @@ finally:
             "-c:v", "copy", 
             mp4_filename
         ], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        print("Done! Video converted and saved successfully as an MP4.")
+        print("Done! Video with YOLO inteligence saved successfully as an MP4.")
     except Exception as e:
         print(f"Error during MP4 conversion: {e}")
