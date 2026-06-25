@@ -33,4 +33,16 @@ finally:
     picam2.stop_recording()
     picam2.close()
     print("Done! Video saved successfully.")
-
+    # --- AUTOMATIC MP4 CONVERSION VIA FFMPEG ---
+    print(f"Converting raw video stream to cam_mp4...")
+    try:
+        # Bypasses GPAC entirely and uses the native Pi video transcoder
+        subprocess.run([
+            "ffmpeg", "-y", 
+            "-i", raw_filename, 
+            "-c:v", "copy", 
+            mp4_filename
+        ], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        print("Done! Video converted and saved successfully as an MP4.")
+    except Exception as e:
+        print(f"Error during MP4 conversion: {e}")
