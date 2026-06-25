@@ -2,7 +2,7 @@ import cv2
 import time
 import subprocess
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(0,cv2.CAP_V4L2)
 
 cap.set(cv2.CV_CAP_PROP_FRAME_WIDTH, 1280) if hasattr(cv2, 'CV_CAP_PROP_FRAME_WIDTH') else cap.set(3, 1280)
 cap.set(cv2.CV_CAP_PROP_FRAME_HEIGHT, 1280) if hasattr(cv2, 'CV_CAP_PROP_FRAME_HEIGHT') else cap.set(4, 720)
