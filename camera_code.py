@@ -2,10 +2,14 @@ import cv2
 import time
 import subprocess
 
-cap = cv2.VideoCapture(0,cv2.CAP_V4L2)
+# Open the camera using the native Video4Linux2 backend
+cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
 
-cap.set(cv2.CV_CAP_PROP_FRAME_WIDTH, 1280) if hasattr(cv2, 'CV_CAP_PROP_FRAME_WIDTH') else cap.set(3, 1280)
-cap.set(cv2.CV_CAP_PROP_FRAME_HEIGHT, 1280) if hasattr(cv2, 'CV_CAP_PROP_FRAME_HEIGHT') else cap.set(4, 720)
+# Set the resolution explicitly (Arducam V2 works best at standard sizes)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+cap.set(cv2.CAP_PROP_FPS, 30)
+
 print("Starting continuous video feed...press Ctrl C to stop")
 
 vlc_command = [
