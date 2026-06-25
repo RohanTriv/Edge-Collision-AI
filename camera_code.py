@@ -1,43 +1,34 @@
-import cv2
 import time
-import subprocess
+from picamera2 import Picamera2
 
-# Open the camera using the native Video4Linux2 backend
-cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
+print("Initializing Arducam V2...")
+picam2 = Picamera2()
 
-# Set the resolution explicitly (Arducam V2 works best at standard sizes)
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-cap.set(cv2.CAP_PROP_FPS, 30)
+# Configure the camera for video recording
+video_config = picam2.create_video_configuration()
+picam2.configure(video_config)
 
-print("Starting continuous video feed...press Ctrl C to stop")
+# Define the output file name
+output_filename = "arducam_video.mp4"
 
-vlc_command = [
-    'cvlc', '-', 
-    '--sout', '#rtp{sdp=rtsp://:8554/stream}', 
-    ':demux=h264'
-]
-vlc_process = subprocess.Popen(vlc_command, stdin=subprocess.PIPE)
-print("Starting continuous video feed: To watch, open on Mac VLC with IP address")
+print(f"Starting video recording... Saving to Edge-Collision-AI")
+# Start recording. The library automatically handles the encoding backend safely.
+picam2.start_recording(output_filename)
+
 try:
-    while True:
-        ret, frame = cap.read()
-        if not ret:
-            print("Failed to grab frame from camera")
-            break
-        try:
-            vlc_process.stdin.write(frame.tobytes())
-        except IOError:
-            pass
-        print("Frame captured successfully...")
-        time.sleep(0.03)
+    # Record for 10 seconds (Change this number to record longer)
+    duration = 10 
+    for i in range(duration):
+        print(f"Recording... {duration - i} seconds remaining.")
+        time.sleep(1)
 
 except KeyboardInterrupt:
-    print("Stopping video feed safely...")
+    print("\nRecording interrupted by user.")
 
 finally:
-    cap.release()
-    if vlc_process.stdin:
-        vlc_process.stdin.close()
+    # Stop recording and safely close the camera interface so it doesn't freeze
+    print("Stopping recording and saving file...")
+    picam2.stop_recording()
+    picam2.close()
+    print("Done! Video saved successfully.")
 
-    vlc_process.terminate()
