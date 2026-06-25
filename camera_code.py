@@ -1,5 +1,6 @@
 import time
 from picamera2 import Picamera2
+from picamera2.encoders import H264Encoder
 
 print("Initializing Arducam V2...")
 picam2 = Picamera2()
@@ -9,11 +10,12 @@ video_config = picam2.create_video_configuration()
 picam2.configure(video_config)
 
 # Define the output file name
-output_filename = "arducam_video.mp4"
+encoder = H264Encoder(bitrate=10000000)  # Sets video stream quality
+output_filename = "arducam_video.h264"
 
 print(f"Starting video recording... Saving to Edge-Collision-AI")
 # Start recording. The library automatically handles the encoding backend safely.
-picam2.start_recording(output=output_filename)
+picam2.start_recording(encoder, output_filename)
 
 try:
     # Record for 10 seconds (Change this number to record longer)
