@@ -13,7 +13,7 @@ output_filename = "arducam_video.mp4"
 
 print(f"Starting video recording... Saving to Edge-Collision-AI")
 # Start recording. The library automatically handles the encoding backend safely.
-picam2.start_recording(output_filename)
+picam2.start_recording(output=output_filename)
 
 try:
     # Record for 10 seconds (Change this number to record longer)
