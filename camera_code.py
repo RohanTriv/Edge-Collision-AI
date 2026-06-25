@@ -10,6 +10,9 @@ picam2 = Picamera2()
 video_config = picam2.create_video_configuration()
 picam2.configure(video_config)
 
+raw_filename = "arducam_video.h264"
+mp4_filename = "arducam_video.mp4"
+
 # Define the output file name
 encoder = H264Encoder(bitrate=10000000)  # Sets video stream quality
 output_filename = "arducam_video.h264"
