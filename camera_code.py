@@ -1,9 +1,19 @@
 import time
+import os 
 import sys 
 from picamera2 import Picamera2
 import subprocess
 import cv2
 from picamera2.encoders import H264Encoder
+
+
+# Create a local tmp directory inside your project folder
+local_tmp = "/home/rohan/Edge-Collision-AI/tmp"
+os.makedirs(local_tmp, exist_ok=True)
+
+# Force Python and Pip to use this new location for extractions
+os.environ["TMPDIR"] = local_tmp
+os.environ["PIP_TMPDIR"] = local_tmp
 
 # Change line 8 to look exactly like this:
 subprocess.check_call([sys.executable, "-m", "pip", "install", "ultralytics", "--no-cache-dir"])
