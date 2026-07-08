@@ -28,7 +28,7 @@ picam2 = Picamera2()
 # Configure for dual-stream: High-res video recording + Low-res array stream for YOLO
 video_config = picam2.create_video_configuration(
     main={"format": "YUV420", "size": (1280, 720)}, # Saved video resolution
-    lores={"format": "BGR8888", "size": (640, 480)} # YOLO processing resolution (much faster!)
+    lores={"format": "RGB888", "size": (640, 480)} # YOLO processing resolution (much faster!)
 )
 picam2.configure(video_config)
 
