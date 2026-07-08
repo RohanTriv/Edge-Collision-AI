@@ -41,7 +41,7 @@ print(f"Starting video recording... Saving to Edge-Collision-AI")
 picam2.start_recording(encoder, raw_filename)
 
 try:
-    duration = 10 
+    duration = 20 
     start_time = time.time()
     
     while time.time() - start_time < duration:
