@@ -5,7 +5,9 @@ import subprocess
 import cv2
 from picamera2.encoders import H264Encoder
 
-subprocess.check_call([sys.executable, "-m", "pip", "install", "ultralytics"])
+# Change line 8 to look exactly like this:
+subprocess.check_call([sys.executable, "-m", "pip", "install", "ultralytics", "--no-cache-dir"])
+
 
 print("Loading YOLOv8 Nano model...")
 # This automatically downloads the lightweight nano weights file on the first run
