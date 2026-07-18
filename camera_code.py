@@ -43,7 +43,7 @@ print("Starting camera and recording frames with YOLO boxes...")
 picam2.start()
 
 try:
-    total_frames_to_record = 32 
+    total_frames_to_record = 1000 
     frame_count = 0
     
     print("Recording {total_frames_to_record} frames with YOLO integrated boxes...")
