@@ -43,10 +43,11 @@ print("Starting camera and recording frames with YOLO boxes...")
 picam2.start()
 
 try:
-    duration = 10 
-    start_time = time.time()
+    total_frames_to_record = 150 
+    frame_count = 0
     
-    while time.time() - start_time < duration:
+    print("Recording {total_frames_to_record} frames with YOLO integrated boxes...")
+    while frame_count < total_frames_to_record:
         rgb_frame = picam2.capture_array()
         
         if rgb_frame is not None:
@@ -63,8 +64,11 @@ try:
             
             # 3. Write this box-filled frame directly into our video file
             video_writer.write(annotated_frame)
+            frame_count += 1
+
+            if frame_count % 10 == 0:
+                print(f"Captured frame {frame_count}/{total_frames_to_record}...")
             
-        time.sleep(0.01)
 
 except KeyboardInterrupt:
     print("\nProcessing interrupted by user.")
