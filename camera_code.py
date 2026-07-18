@@ -3,8 +3,8 @@ import os
 import sys 
 import subprocess
 import cv2
+import numpy as np
 from picamera2 import Picamera2
-from picamera2.encoders import H264Encoder
 
 # Create a local tmp directory inside your project folder
 local_tmp = "/home/rohan/Edge-Collision-AI/tmp"
@@ -25,54 +25,71 @@ model = YOLO("yolov8n.pt")
 print("Initializing Arducam V2...")
 picam2 = Picamera2()
 
-# Configure for dual-stream: High-res video recording + Low-res array stream for YOLO
+# Configure a single YUV stream for raw processing
 video_config = picam2.create_video_configuration(
-    main={"format": "YUV420", "size": (1280, 720)}, # Saved video resolution
-    lores={"format": "YUV420", "size": (640, 480)} # YOLO processing resolution (much faster!)
+    main={"format": "RGB888", "size": (640, 480)} 
 )
 picam2.configure(video_config)
 
-raw_filename = "arducam_video.h264"
-mp4_filename = "arducam_video.mp4"
+# File paths
+annotated_avi = "yolo_output.avi"
+final_mp4 = "arducam_video.mp4"
 
-encoder = H264Encoder(bitrate=5000000) # Balanced bitrate for stability
+# Set up the OpenCV Video Writer to record the frames WITH the bounding boxes
+fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+video_writer = cv2.VideoWriter(annotated_avi, fourcc, 30.0, (640, 480))
 
-print(f"Starting video recording... Saving to Edge-Collision-AI")
-picam2.start_recording(encoder, raw_filename)
+print("Starting camera and recording frames with YOLO boxes...")
+picam2.start()
 
 try:
-    duration = 20 
+    duration = 10 
     start_time = time.time()
     
     while time.time() - start_time < duration:
-        # Pull the low-res background buffer frame (prevents Illegal instruction crashes)
-        frame = picam2.capture_array("lores")
+        rgb_frame = picam2.capture_array()
         
-        if frame is not None:
-            # BGR8888 configuration maps perfectly to OpenCV, no conversion needed!
-            results = model.track(source=frame, persist=True, verbose=False)
+        if rgb_frame is not None:
+            # Extract grayscale for YOLO processing
+            bgr_canvas = cv2.cvtColor(rgb_frame, cv2.COLOR_RGB2BGR)
             
-            # If you want to visualize or save frames, do it here
-            # annotated_frame = results[0].plot()
+            # 1. Run YOLO tracking on the frame
+            results = model.track(source=bgr_canvas, conf=0.25, verbose=False)
+            annotated_frame = bgr_canvas 
+            # 2. Tell YOLO to paint the boxes, text, and labels onto the image
+            # We convert to BGR color space here so the boxes show up in bright colors
+            if results and len(results) > 0:
+                annotated_frame = results[0].plot()
             
-        time.sleep(0.01) # Short sleep to prevent CPU thread lock
+            # 3. Write this box-filled frame directly into our video file
+            video_writer.write(annotated_frame)
+            
+        time.sleep(0.01)
 
 except KeyboardInterrupt:
     print("\nProcessing interrupted by user.")
 
 finally:
-    print("Stopping recording and closing cam hardware...")
-    picam2.stop_recording()
+    print("Closing camera hardware and saving video stream...")
+    picam2.stop()
     picam2.close()
+    video_writer.release()
     
-    print(f"Converting raw video stream to mp4...")
+    # Convert the AVI container to a web/Mac friendly MP4 file
+    print("Converting to Mac-compatible MP4 format...")
     try:
         subprocess.run([
             "ffmpeg", "-y", 
-            "-i", raw_filename, 
-            "-c:v", "copy", 
-            mp4_filename
+            "-i", annotated_avi, 
+            "-vcodec", "libx264", 
+            "-crf", "25",
+            final_mp4
         ], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        print("Done! Video with YOLO intelligence saved successfully as an MP4.")
+        
+        # Clean up temporary AVI file
+        if os.path.exists(annotated_avi):
+            os.remove(annotated_avi)
+            
+        print("Done! Your video with YOLO boxes is saved successfully as yolo_output.mp4.")
     except Exception as e:
         print(f"Error during MP4 conversion: {e}")
