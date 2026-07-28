@@ -46,7 +46,7 @@ try:
     total_frames_to_record = 1000 
     frame_count = 0
     
-    print("Recording {total_frames_to_record} frames with YOLO integrated boxes...")
+    print(f"Recording {total_frames_to_record} frames with YOLO integrated boxes...")
     while frame_count < total_frames_to_record:
         rgb_frame = picam2.capture_array()
         
@@ -55,18 +55,17 @@ try:
             bgr_canvas = cv2.cvtColor(rgb_frame, cv2.COLOR_RGB2BGR)
             
             # 1. Run YOLO tracking on the frame
-            results = model.track(source=bgr_canvas, conf=0.25, verbose=False)
-            annotated_frame = bgr_canvas 
+            results = model.track(source=bgr_canvas, conf=0.25, verbose=False) 
             # 2. Tell YOLO to paint the boxes, text, and labels onto the image
             # We convert to BGR color space here so the boxes show up in bright colors
+            video_writer.write(bgr_canvas)
+            frame_count+=1
             if results and len(results) > 0:
-                annotated_frame = results[0].plot()
+                bgr_canvas = results[0].plot()
             
-            # 3. Write this box-filled frame directly into our video file
-            video_writer.write(annotated_frame)
-            frame_count += 1
+            # 3. Write this box-filled frame directly into our video file)
 
-            if frame_count % 10 == 0:
+            if frame_count % 100 == 0:
                 print(f"Captured frame {frame_count}/{total_frames_to_record}...")
             
 
