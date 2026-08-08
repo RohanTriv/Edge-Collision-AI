@@ -104,11 +104,13 @@ try:
             if GPIO.input(SWITCH_PIN) == GPIO.LOW:
                 road_mode = "one_way"
                 GPIO.output(BLUE_STATUS_PIN, GPIO.HIGH)   # Turn Blue validation light ON
-                GPIO.output(RED_STATUS_PIN, GPIO.LOW)   # Turn Green validation light OFF
+                GPIO.output(RED_STATUS_PIN, GPIO.LOW)   # Turn red validation light OFF
+                print("Road mode: ONE WAY")
             else:
                 road_mode = "two_way"
-                GPIO.output(RED_STATUS_PIN, GPIO.HIGH)  # Turn Green validation light ON
+                GPIO.output(RED_STATUS_PIN, GPIO.HIGH)  # Turn red validation light ON
                 GPIO.output(BLUE_STATUS_PIN, GPIO.LOW)    # Turn Blue validation light OFF
+                print("Road mode: TWO WAY")
         else:
             road_mode = "two_way"
 
