@@ -1,12 +1,20 @@
 import time
-import os
-import sys
-import subprocess
-import cv2
-import numpy as np
-from picamera2 import Picamera2
+#import os
+#import sys
+#import subprocess
+#import cv2
+#import numpy as np
+#from picamera2 import Picamera2
+from gpiozero import Button
+from time import sleep
 
+switch = Button(5, pull_up=True)
+
+while True:
+    print("Pin state:", switch.is_pressed)
+    sleep(0.3)
 # Try importing Raspberry Pi GPIO library for physical hardware controls
+"""
 try:
     import RPi.GPIO as GPIO
     GPIO_AVAILABLE = True
@@ -262,3 +270,5 @@ finally:
     # Re-encode to a more portable/compressed final mp4
     if frame_count > 0:
         subprocess.run(["ffmpeg", "-y", "-i", annotated_avi, "-vcodec", "libx264", "-crf", "25", final_mp4])
+
+"""
