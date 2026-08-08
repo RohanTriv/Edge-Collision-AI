@@ -1,26 +1,13 @@
 import time
-#import os
-#import sys
-#import subprocess
-#import cv2
-#import numpy as np
-#from picamera2 import Picamera2
-from gpiozero import Button, RGBLED
-from time import sleep
+import os
+import sys
+import subprocess
+import cv2
+import numpy as np
+from picamera2 import Picamera2
 
-led = RGBLED(red=17, green=27, blue=22)
-switch = Button(5, pull_up=True)
-
-while True:
-    if switch.is_pressed:
-        led.color = (0, 0, 1)  # blue = one-way
-        print("One-Way")
-    else:
-        led.color = (0, 1, 0)  # green = two-way
-        print("Two-Way")
-    sleep(0.2)
 # Try importing Raspberry Pi GPIO library for physical hardware controls
-"""
+
 try:
     import RPi.GPIO as GPIO
     GPIO_AVAILABLE = True
@@ -44,14 +31,14 @@ ONE_WAY_FLOW = "left_to_right"
 # pick ONE source of truth. Values below are left as originally written; change
 # them to 5 / 17 / 27 / 22 (etc.) if you rewire to match the earlier test script.       
 SWITCH_PIN = 5       # Input: Toggle switch pin for selecting Road Mode
-GREEN_STATUS_PIN = 27 # Output: On-site verification light for TWO-WAY profile
-BLUE_STATUS_PIN = 22  # Output: On-site verification light for ONE-WAY profile
+BLUE_STATUS_PIN = 27 # Output: On-site verification light for TWO-WAY profile
+RED_STATUS_PIN = 22  # Output: On-site verification light for ONE-WAY profile
 
 if GPIO_AVAILABLE:
     GPIO.setmode(GPIO.BCM)
 
     # Configure status confirmation pins
-    GPIO.setup(GREEN_STATUS_PIN, GPIO.OUT)
+    GPIO.setup(RED_STATUS_PIN, GPIO.OUT)
     GPIO.setup(BLUE_STATUS_PIN, GPIO.OUT)
 
     # Configure input with internal pull-up resistor to prevent floating signals
@@ -117,10 +104,10 @@ try:
             if GPIO.input(SWITCH_PIN) == GPIO.LOW:
                 road_mode = "one_way"
                 GPIO.output(BLUE_STATUS_PIN, GPIO.HIGH)   # Turn Blue validation light ON
-                GPIO.output(GREEN_STATUS_PIN, GPIO.LOW)   # Turn Green validation light OFF
+                GPIO.output(RED_STATUS_PIN, GPIO.LOW)   # Turn Green validation light OFF
             else:
                 road_mode = "two_way"
-                GPIO.output(GREEN_STATUS_PIN, GPIO.HIGH)  # Turn Green validation light ON
+                GPIO.output(RED_STATUS_PIN, GPIO.HIGH)  # Turn Green validation light ON
                 GPIO.output(BLUE_STATUS_PIN, GPIO.LOW)    # Turn Blue validation light OFF
         else:
             road_mode = "two_way"
@@ -277,4 +264,3 @@ finally:
     if frame_count > 0:
         subprocess.run(["ffmpeg", "-y", "-i", annotated_avi, "-vcodec", "libx264", "-crf", "25", final_mp4])
 
-"""
