@@ -5,20 +5,18 @@ import time
 #import cv2
 #import numpy as np
 #from picamera2 import Picamera2
-from gpiozero import Button, RGBLED
+from gpiozero import RGBLED
 from time import sleep
 
 led = RGBLED(red=17, green=27, blue=22)
-switch = Button(5, pull_up=True)
 
-while True:
-    if switch.is_pressed:
-        led.color = (0, 0, 1)  # blue = one-way
-        print("One-Way")
-    else:
-        led.color = (0, 1, 0)  # green = two-way
-        print("Two-Way")
-    sleep(0.2)
+led.color = (1, 0, 0)  # should be red
+sleep(2)
+led.color = (0, 1, 0)  # should be green
+sleep(2)
+led.color = (0, 0, 1)  # should be blue
+sleep(2)
+led.off()
 # Try importing Raspberry Pi GPIO library for physical hardware controls
 """
 try:
