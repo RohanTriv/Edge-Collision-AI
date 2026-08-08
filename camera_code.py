@@ -30,8 +30,8 @@ ONE_WAY_FLOW = "left_to_right"
 # pick ONE source of truth. Values below are left as originally written; change
 # them to 5 / 17 / 27 / 22 (etc.) if you rewire to match the earlier test script.       
 SWITCH_PIN = 5       # Input: Toggle switch pin for selecting Road Mode
-GREEN_STATUS_PIN = 24 # Output: On-site verification light for TWO-WAY profile
-BLUE_STATUS_PIN = 25  # Output: On-site verification light for ONE-WAY profile
+GREEN_STATUS_PIN = 27 # Output: On-site verification light for TWO-WAY profile
+BLUE_STATUS_PIN = 22  # Output: On-site verification light for ONE-WAY profile
 
 if GPIO_AVAILABLE:
     GPIO.setmode(GPIO.BCM)
