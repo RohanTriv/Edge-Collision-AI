@@ -35,8 +35,6 @@ BLUE_STATUS_PIN = 25  # Output: On-site verification light for ONE-WAY profile
 
 if GPIO_AVAILABLE:
     GPIO.setmode(GPIO.BCM)
-    GPIO.setup(LED_PIN, GPIO.OUT)
-    GPIO.output(LED_PIN, GPIO.LOW)
 
     # Configure status confirmation pins
     GPIO.setup(GREEN_STATUS_PIN, GPIO.OUT)
@@ -237,16 +235,16 @@ try:
                         cv2.FONT_HERSHEY_DUPLEX, 0.5, (255, 255, 255), 1)
 
             # --- HARDWARE BLINK DRIVER ---
-            if collision_risk > 10:
-                flash_interval = max(0.05, 0.6 - (collision_risk / 200.0))
-                if time.time() - last_led_flash_time > flash_interval:
-                    current_led_state = not current_led_state
-                    if GPIO_AVAILABLE:
-                        GPIO.output(LED_PIN, GPIO.HIGH if current_led_state else GPIO.LOW)
-                    last_led_flash_time = time.time()
-            else:
-                if GPIO_AVAILABLE:
-                    GPIO.output(LED_PIN, GPIO.LOW)
+          #  if collision_risk > 10:
+           #     flash_interval = max(0.05, 0.6 - (collision_risk / 200.0))
+           #     if time.time() - last_led_flash_time > flash_interval:
+            #        current_led_state = not current_led_state
+            #        if GPIO_AVAILABLE:
+             #           GPIO.output(LED_PIN, GPIO.HIGH if current_led_state else GPIO.LOW)
+             #       last_led_flash_time = time.time()
+           # else:
+             #   if GPIO_AVAILABLE:
+                #    GPIO.output(LED_PIN, GPIO.LOW)
 
             # Write this frame directly instead of buffering in a list
             video_writer.write(annotated_frame)
