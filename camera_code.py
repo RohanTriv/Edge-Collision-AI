@@ -191,7 +191,8 @@ try:
 
                 # Visual Anchor Points
                 cv2.circle(annotated_frame, (VERTEX_X, VERTEX_Y), 15, (0, 0, 255), -1)
-
+                pedestrian_hazard=False
+                pedestrian_risk_value=0.0
                 for box, track_id, cls_id in zip(boxes, track_ids, class_ids):
                     seen_ids_this_frame.add(track_id)
                     x1, y1, x2, y2 = box
@@ -234,9 +235,11 @@ try:
                                     this_object_wrong_way = True
                                     wrong_way_detected = True
 
+                    pedestrian_risk_value=0
                     if is_pedestrian and distance_to_vertex < 150:
                         pedestrian_hazard = True
-
+                        this_pedestrian_risk = max(0.0, min(75.0, (1.0 - (distance_to_vertex / 150.0)) * 75.0))
+                        pedestrian_risk_value = max(pedestrian_risk_value, this_pedestrian_risk)
                     box_color = (0, 0, 255) if this_object_wrong_way else (0, 255, 0)
                     cv2.rectangle(annotated_frame, (int(x1), int(y1)), (int(x2), int(y2)), box_color, 2)
 
@@ -266,7 +269,7 @@ try:
                     collision_risk = 100.0
                     status_text = "WRONG WAY VEHICLE DETECTED"
                 elif pedestrian_hazard:
-                    collision_risk = 75.0
+                    collision_risk = pedestrian_risk_value
                     status_text = "PEDESTRIAN IN BLIND CURVE"
 
             # --- ON-SCREEN VIDEO BANNER CONFIRMATION OVERLAY ---
