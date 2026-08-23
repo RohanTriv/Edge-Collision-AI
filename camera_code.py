@@ -4,6 +4,7 @@ import sys
 import subprocess
 import cv2
 import numpy as np
+os.environ["LIBCAMERA_LOG_LEVELS"] = "*:ERROR"
 from picamera2 import Picamera2
 
 # Try importing Raspberry Pi GPIO library for physical hardware controls
@@ -129,6 +130,8 @@ os.environ["TMPDIR"] = local_tmp
 os.environ["PIP_TMPDIR"] = local_tmp
 
 try:
+    import logging
+    logging.getLogger("ultralytics").setLevel(logging.ERROR)
     from ultralytics import YOLO
 except ImportError:
     subprocess.check_call([sys.executable, "-m", "pip", "install", "ultralytics", "--no-cache-dir"])
