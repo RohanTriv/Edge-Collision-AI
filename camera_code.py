@@ -157,7 +157,7 @@ frame_count = 0
 
 # --- VIDEO WRITER SETUP ---
 fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-RECORDING_FPS = 15.0  # estimate; adjust to your Pi's real sustained FPS if known
+RECORDING_FPS = 1.33  # estimate; adjust to your Pi's real sustained FPS if known
 video_writer = cv2.VideoWriter(annotated_avi, fourcc, RECORDING_FPS, (FRAME_W, FRAME_H))
 
 try:
