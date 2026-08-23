@@ -172,7 +172,7 @@ try:
             bgr_canvas = cv2.cvtColor(rgb_frame, cv2.COLOR_RGB2BGR)
 
             # 2. Run YOLO tracking over frame
-            track_results = model.track(source=bgr_canvas, conf=0.25, persist=True, verbose=False, classes=road_safety_classes)
+            track_results = model.track(source=bgr_canvas, conf=0.25, persist=True, verbose=False, classes=road_safety_classes, tracker="bytetrack.yaml", imgsz=320)
             results = track_results[0]
             annotated_frame = bgr_canvas.copy()
 
