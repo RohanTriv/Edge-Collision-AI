@@ -307,7 +307,9 @@ finally:
     picam2.stop()
     picam2.close()
     video_writer.release()
-
+    elapsed_real_time = time.time() - start_time
+    actual_fps = frame_count / elapsed_real_time if elapsed_real_time > 0 else 15.0
+    print(f"[INFO] Captured {frame_count} frames in {elapsed_real_time:.1f}s real time -> actual FPS: {actual_fps:.2f}")
     # Re-encode to a more portable/compressed final mp4
     if frame_count > 0:
         subprocess.run(["ffmpeg", "-y", "-i", annotated_avi, "-vcodec", "libx264", "-crf", "25", final_mp4])
